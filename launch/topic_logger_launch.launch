@@ -1,0 +1,13 @@
+<launch>
+    <arg name="image_name" default="/camera/image_raw"/>
+    <arg name="imu_name"   default="/imu/imu"/>
+    <arg name="pose_name"  default="/ground_truth_pose"/>
+    <arg name="save_dir"   default="/home/icslkchlap/save/"/>
+
+    <node pkg="topic_logger" name="topic_logger_node" type="topic_logger_node">
+        <param name="image_topic_name" type="string" value="$(arg image_name)"/>
+        <param name="imu_topic_name" type="string" value="$(arg imu_name)"/>
+        <param name="pose_topic_name" type="string" value="$(arg pose_name)"/>
+	<param name="folder_dir" type="string" value="$(arg save_dir)"/>
+    </node>
+</launch>
