@@ -19,6 +19,8 @@ TopicLogger::TopicLogger(std::string folder_dir_){
 	system(folder_create_command.c_str());
 	folder_create_command = "mkdir " + folder_dir_temp + "image";
 	system(folder_create_command.c_str());
+	folder_create_command = "mkdir " + folder_dir_temp + "depth";
+	system(folder_create_command.c_str());
 
 	file_name = folder_dir_temp+"association.txt";
 	std::cout<<file_name.c_str()<<std::endl;
@@ -48,7 +50,7 @@ void TopicLogger::pose_addline(const PoseVector& current_pose, const TopicTime& 
 	file_pose.unsetf(std::ios::fixed);
 	for(int i=0; i<7; i++)
 	{
-		file_pose << this->current_pose(i,0) << "\t";
+		file_pose << current_pose(i,0) << "\t";
 	}
 	file_pose << "\n";
 };
@@ -63,7 +65,7 @@ void TopicLogger::imu_addline(const ImuVector& current_imu, const TopicTime& cur
 	file_imu << "\n";
 };
 
-void TopicLogger::image_addline(const cv::Mat& img,const TopicTime& curr_time){
+void TopicLogger::image_addline(const cv::Mat& img, const TopicTime& curr_time){
 	bool static png_param_on=false;
 	std::vector<int> static png_parameters;
 	if(png_param_on==false){
@@ -71,7 +73,23 @@ void TopicLogger::image_addline(const cv::Mat& img,const TopicTime& curr_time){
 			png_parameters.push_back(0);
 			png_param_on = true;
 	}
-	std::string filne_name = folder_dir+"image/"+curr_time+".png";
-	cv::imwrite(filne_name,img,png_parameters);
+	std::string file_name = folder_dir+"image/"+curr_time+".png";
+	cv::imwrite(file_name,img,png_parameters);
 	file_image << curr_time<<"\t"<< curr_time<<".png"<<"\n";	// association save
 };
+
+void TopicLogger::rgbd_addline(const cv::Mat& current_image, const cv::Mat& current_depth, const TopicTime& image_time) {
+	bool static png_param_on=false;
+	std::vector<int> static png_parameters;
+	if(png_param_on==false){
+			png_parameters.push_back( CV_IMWRITE_PNG_COMPRESSION );	// We save with no compression for faster processing
+			png_parameters.push_back(0);
+			png_param_on = true;
+	}
+	std::string file_name = folder_dir+"image/"+image_time+".png";
+	cv::imwrite(file_name,current_image,png_parameters);
+	std::string file_depth_name = folder_dir+"depth/"+image_time+".png";
+	cv::imwrite(file_depth_name,current_depth,png_parameters);
+	file_image << image_time<<"\t"<< image_time<<".png"<<"\n";	// association save
+
+}

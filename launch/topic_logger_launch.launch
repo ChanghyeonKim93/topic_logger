@@ -1,11 +1,13 @@
 <launch>
-    <arg name="image_name" default="/camera/image_raw"/>
+    <arg name="image_name" default="/camera/rgb/image_raw"/>
+    <arg name="depth_name" default="/camera/depth/image_rect"/>
     <arg name="imu_name"   default="/imu/imu"/>
-    <arg name="pose_name"  default="/ground_truth_pose"/>
-    <arg name="save_dir"   default="/home/icslkchlap/save/"/>
+    <arg name="pose_name"  default="/vicon/wand/wand"/>
+    <arg name="save_dir"   default="/home/haram/save_exp/"/>
 
     <node pkg="topic_logger" name="topic_logger_node" type="topic_logger_node">
         <param name="image_topic_name" type="string" value="$(arg image_name)"/>
+        <param name="depth_topic_name" type="string" value="$(arg depth_name)"/>
         <param name="imu_topic_name" type="string" value="$(arg imu_name)"/>
         <param name="pose_topic_name" type="string" value="$(arg pose_name)"/>
 	<param name="folder_dir" type="string" value="$(arg save_dir)"/>

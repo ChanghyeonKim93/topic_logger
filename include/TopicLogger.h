@@ -25,7 +25,7 @@ public:
   void pose_addline(const PoseVector& current_pose, const TopicTime& curr_time);
   void imu_addline(const ImuVector& current_imu, const TopicTime& curr_time);
   void image_addline(const cv::Mat& img,const TopicTime& curr_time);
-
+  void rgbd_addline(const cv::Mat& current_image, const cv::Mat& current_depth, const TopicTime& image_time);
 private:
   std::string folder_dir;
 
