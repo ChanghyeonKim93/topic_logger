@@ -18,6 +18,7 @@ TopicLogger::TopicLogger(std::string folder_dir_)
 
 	folder_create_command = "mkdir " + folder_dir_temp;
 	system(folder_create_command.c_str());
+
 	folder_create_command = "mkdir " + folder_dir_temp + "single_image";
 	system(folder_create_command.c_str());
 
@@ -25,7 +26,6 @@ TopicLogger::TopicLogger(std::string folder_dir_)
 	system(folder_create_command.c_str());
 	folder_create_command = "mkdir " + folder_dir_temp + "stereo/right";
 	system(folder_create_command.c_str());
-
 	folder_create_command = "mkdir " + folder_dir_temp + "stereo/left";
 	system(folder_create_command.c_str());
 
@@ -53,7 +53,7 @@ TopicLogger::TopicLogger(std::string folder_dir_)
 
 	file_name = folder_dir_temp + "imu.txt";
 	file_imu.open(file_name.c_str());
-	file_imu << "# time tx ty tz wx wy wz mx my mz\n";
+	file_imu << "# time tx ty tz wx wy wz mx my mz qx qy qz qw\n";
 
 	file_name = folder_dir_temp + "groundtruth.txt";
 	file_pose.open(file_name.c_str());
@@ -87,7 +87,7 @@ void TopicLogger::imu_addline(const ImuVector &current_imu, const TopicTime &cur
 	file_imu << curr_time << " ";
 	file_imu << std::setprecision(13);
 	file_imu.unsetf(std::ios::fixed);
-	for (int i = 0; i < 9; i++)
+	for (int i = 0; i < 13; i++)
 	{
 		file_imu << current_imu(i, 0) << " ";
 	}

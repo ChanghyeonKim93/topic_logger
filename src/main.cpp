@@ -29,15 +29,15 @@
 
 typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image, sensor_msgs::Image> MySyncPolicy;
 
-bool pose_updated     = false;
-bool single_updated   = false;
-bool rgbd_updated     = false;
-bool stereo_updated   = false;
-bool imu_updated      = false;
+bool pose_updated = false;
+bool single_updated = false;
+bool rgbd_updated = false;
+bool stereo_updated = false;
+bool imu_updated = false;
 bool magnetic_updated = false;
 
 typedef Eigen::Matrix<double, 7, 1> PoseVector;
-typedef Eigen::Matrix<double, 9, 1> ImuVector;
+typedef Eigen::Matrix<double, 13, 1> ImuVector;
 typedef std::string TopicTime;
 
 PoseVector current_pose = PoseVector::Zero();
@@ -129,6 +129,12 @@ void imu_callback(const sensor_msgs::ImuConstPtr &msg)
 	current_imu(3, 0) = msg->angular_velocity.x;
 	current_imu(4, 0) = msg->angular_velocity.y;
 	current_imu(5, 0) = msg->angular_velocity.z;
+
+	current_imu(9, 0) = msg->orientation.x;
+	current_imu(10, 0) = msg->orientation.y;
+	current_imu(11, 0) = msg->orientation.z;
+	current_imu(12, 0) = msg->orientation.w;
+
 	double curr_time = (double)(msg->header.stamp.sec * 1e6 + msg->header.stamp.nsec / 1000) / 1000000.0;
 	imu_time = dtos(curr_time);
 	imu_updated = true;
@@ -157,7 +163,7 @@ int main(int argc, char **argv)
 	{
 		ROS_ERROR_STREAM("this is toerere\n");
 	}
-	ROS_INFO_STREAM("Saving folder directory: " << folder_dir );
+	ROS_INFO_STREAM("Saving folder directory: " << folder_dir);
 
 	// Generate a topic logger class.
 	TopicLogger *topic_logger = new TopicLogger(folder_dir);
@@ -194,7 +200,7 @@ int main(int argc, char **argv)
 	ros::param::get("~magnetic_topic", magnetic_topic);
 	ros::param::get("~pose_topic", pose_topic);
 
-	ROS_INFO_STREAM(" Activated topics - single ("<<single_on<<"), rgbd ("<<rgbd_on<<"), stereo ("<<stereo_on<<"), imu ("<<imu_on<<"), magnetic ("<<magnetic_on<<"), pose ("<<pose_on<<")" );
+	ROS_INFO_STREAM(" Activated topics - single (" << single_on << "), rgbd (" << rgbd_on << "), stereo (" << stereo_on << "), imu (" << imu_on << "), magnetic (" << magnetic_on << "), pose (" << pose_on << ")");
 	if (rgbd_on == true)
 	{
 		message_filters::Subscriber<sensor_msgs::Image> rgb_img_sub(nh, rgb_topic, 1);
@@ -230,12 +236,14 @@ int main(int argc, char **argv)
 			topic_logger->imu_addline(current_imu, imu_time);
 			imu_updated = false;
 		}
-		if(single_on == true && single_updated==true){
+		if (single_on == true && single_updated == true)
+		{
 			topic_logger->single_image_addline(cur_single_img, single_time);
 			single_updated = false;
 		}
 
-		if(stereo_on == true && stereo_updated==true){
+		if (stereo_on == true && stereo_updated == true)
+		{
 			topic_logger->stereo_image_addline(cur_left_img, cur_right_img, single_time);
 			stereo_updated = false;
 		}
@@ -252,7 +260,7 @@ int main(int argc, char **argv)
 			pose_updated = false;
 		}
 
-		if(magnetic_on == true && magnetic_updated == true)
+		if (magnetic_on == true && magnetic_updated == true)
 		{
 			magnetic_updated = false;
 		}

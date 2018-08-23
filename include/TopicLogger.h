@@ -14,7 +14,7 @@
 #include <opencv2/highgui/highgui.hpp>
 
 typedef Eigen::Matrix<double,7,1> PoseVector;
-typedef Eigen::Matrix<double,9,1> ImuVector;
+typedef Eigen::Matrix<double,13,1> ImuVector;
 typedef std::string TopicTime;
 
 class TopicLogger {
