@@ -13,33 +13,41 @@ TopicLogger::TopicLogger(std::string folder_dir_)
 	this->folder_dir = folder_dir_;
 	folder_dir_temp = this->folder_dir;
 
+	folder_create_command = "rm -rf " + folder_dir_temp;
+	system(folder_create_command.c_str());
+
 	folder_create_command = "mkdir " + folder_dir_temp;
 	system(folder_create_command.c_str());
 	folder_create_command = "mkdir " + folder_dir_temp + "single_image";
 	system(folder_create_command.c_str());
 
-	folder_create_command = "mkdir " + folder_dir_temp + "stereo/left";
+	folder_create_command = "mkdir " + folder_dir_temp + "stereo";
 	system(folder_create_command.c_str());
 	folder_create_command = "mkdir " + folder_dir_temp + "stereo/right";
 	system(folder_create_command.c_str());
 
-	folder_create_command = "mkdir " + folder_dir_temp + "rgbd/rgb";
+	folder_create_command = "mkdir " + folder_dir_temp + "stereo/left";
+	system(folder_create_command.c_str());
+
+	folder_create_command = "mkdir " + folder_dir_temp + "rgbd";
 	system(folder_create_command.c_str());
 	folder_create_command = "mkdir " + folder_dir_temp + "rgbd/depth";
 	system(folder_create_command.c_str());
+	folder_create_command = "mkdir " + folder_dir_temp + "rgbd/rgb";
+	system(folder_create_command.c_str());
 
 	file_name = folder_dir_temp + "association_single.txt";
-	std::cout << file_name.c_str() << std::endl;
+	//std::cout << file_name.c_str() << std::endl;
 	file_single_image.open(file_name.c_str(), std::ios::trunc);
 	file_single_image << "# time filename";
 
 	file_name = folder_dir_temp + "stereo/association_stereo.txt";
-	std::cout << file_name.c_str() << std::endl;
+	//std::cout << file_name.c_str() << std::endl;
 	file_stereo_image.open(file_name.c_str(), std::ios::trunc);
 	file_stereo_image << "# time filename";
 
 	file_name = folder_dir_temp + "rgbd/association_rgbd.txt";
-	std::cout << file_name.c_str() << std::endl;
+	//std::cout << file_name.c_str() << std::endl;
 	file_rgbd_image.open(file_name.c_str(), std::ios::trunc);
 	file_rgbd_image << "# time filename";
 

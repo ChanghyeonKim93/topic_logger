@@ -78,7 +78,7 @@ void pose_callback(const geometry_msgs::TransformStamped::ConstPtr &msg)
 	double curr_time = (double)(msg->header.stamp.sec * 1e6 + msg->header.stamp.nsec / 1000) / 1000000.0;
 	pose_time = dtos(curr_time);
 	pose_updated = true;
-	ROS_INFO_STREAM("Pose updated");
+	//ROS_INFO_STREAM("Pose updated");
 }
 
 void image_callback(const sensor_msgs::ImageConstPtr &msg)
@@ -90,7 +90,7 @@ void image_callback(const sensor_msgs::ImageConstPtr &msg)
 	double curr_time = (double)(msg->header.stamp.sec * 1e6 + msg->header.stamp.nsec / 1000) / 1000000.0;
 	single_time = dtos(curr_time);
 	single_updated = true;
-	ROS_INFO_STREAM("Single Image updated");
+	//ROS_INFO_STREAM("Single Image updated");
 }
 
 void rgbd_callback(const sensor_msgs::ImageConstPtr &rgb, const sensor_msgs::ImageConstPtr &depth)
@@ -104,7 +104,7 @@ void rgbd_callback(const sensor_msgs::ImageConstPtr &rgb, const sensor_msgs::Ima
 	double curr_time = (double)(rgb->header.stamp.sec * 1e6 + rgb->header.stamp.nsec / 1000) / 1000000.0;
 	single_time = dtos(curr_time);
 	single_updated = true;
-	ROS_INFO_STREAM("Rgb-d updated");
+	//ROS_INFO_STREAM("Rgb-d updated");
 }
 
 void stereo_image_callback(const sensor_msgs::ImageConstPtr &left, const sensor_msgs::ImageConstPtr &right)
@@ -118,7 +118,7 @@ void stereo_image_callback(const sensor_msgs::ImageConstPtr &left, const sensor_
 	double curr_time = (double)(left->header.stamp.sec * 1e6 + left->header.stamp.nsec / 1000) / 1000000.0;
 	stereo_time = dtos(curr_time);
 	stereo_updated = true;
-	ROS_INFO_STREAM("Stereo updated");
+	//ROS_INFO_STREAM("Stereo updated");
 }
 
 void imu_callback(const sensor_msgs::ImuConstPtr &msg)
@@ -132,7 +132,7 @@ void imu_callback(const sensor_msgs::ImuConstPtr &msg)
 	double curr_time = (double)(msg->header.stamp.sec * 1e6 + msg->header.stamp.nsec / 1000) / 1000000.0;
 	imu_time = dtos(curr_time);
 	imu_updated = true;
-	ROS_INFO_STREAM("Imu updated");
+	//ROS_INFO_STREAM("Imu updated");
 }
 
 void magnetic_callback(const sensor_msgs::MagneticFieldConstPtr &msg)
@@ -144,7 +144,7 @@ void magnetic_callback(const sensor_msgs::MagneticFieldConstPtr &msg)
 	double curr_time = (double)(msg->header.stamp.sec * 1e6 + msg->header.stamp.nsec / 1000) / 1000000.0;
 	magnetic_time = dtos(curr_time);
 	magnetic_updated = true;
-	ROS_INFO_STREAM("Magnetic updated");
+	//ROS_INFO_STREAM("Magnetic updated");
 }
 
 int main(int argc, char **argv)
@@ -157,7 +157,7 @@ int main(int argc, char **argv)
 	{
 		ROS_ERROR_STREAM("this is toerere\n");
 	}
-	std::cout << "Saving folder directory: " << folder_dir << std::endl;
+	ROS_INFO_STREAM("Saving folder directory: " << folder_dir );
 
 	// Generate a topic logger class.
 	TopicLogger *topic_logger = new TopicLogger(folder_dir);
@@ -194,6 +194,7 @@ int main(int argc, char **argv)
 	ros::param::get("~magnetic_topic", magnetic_topic);
 	ros::param::get("~pose_topic", pose_topic);
 
+	ROS_INFO_STREAM(" Activated topics - single ("<<single_on<<"), rgbd ("<<rgbd_on<<"), stereo ("<<stereo_on<<"), imu ("<<imu_on<<"), magnetic ("<<magnetic_on<<"), pose ("<<pose_on<<")" );
 	if (rgbd_on == true)
 	{
 		message_filters::Subscriber<sensor_msgs::Image> rgb_img_sub(nh, rgb_topic, 1);
@@ -253,7 +254,6 @@ int main(int argc, char **argv)
 
 		if(magnetic_on == true && magnetic_updated == true)
 		{
-			topic_logger->imu_addline(current_imu, imu_time);
 			magnetic_updated = false;
 		}
 	}
