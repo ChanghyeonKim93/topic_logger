@@ -1,15 +1,44 @@
 <launch>
-    <arg name="image_name" default="/camera/rgb/image_raw"/>
-    <arg name="depth_name" default="/camera/depth/image_rect"/>
-    <arg name="imu_name"   default="/imu/imu"/>
-    <arg name="pose_name"  default="/vicon/wand/wand"/>
-    <arg name="save_dir"   default="/home/haram/save_exp/"/>
+    <arg name="single_image_on"  default="false"/>
+    <arg name="rgbd_images_on"   default="false"/>
+    <arg name="stereo_images_on" default="false"/>
+    <arg name="imu_on"           default="true"/>
+    <arg_name="magnetic_on"      default="true"/>
+    <arg name="pose_on"          default="false"/>
+
+    <arg name="single_image_name"        default="/camera/image_raw"/>
+
+    <arg name="rgb_image_name"           default="/camera/rgb/image_raw"/>
+    <arg name="depth_image_name"         default="/camera/depth/image_rect"/>
+
+    <arg name="stereo_left_image_name"   default="/camera/image_left"/>
+    <arg name="stereo_right_image_name"  default="/camera/image_right"/>'
+
+    <arg name="imu_name"                 default="/imu/imu"/>
+    <arg name="magnetic_name"            default="/imu/magnetic_field"/>
+
+    <arg name="pose_name"                default="/vicon/wand/wand"/>
+
+    <arg name="save_folder_dir"          default="/home/icslkchnuc/save_exp/"/>
 
     <node pkg="topic_logger" name="topic_logger_node" type="topic_logger_node">
-        <param name="image_topic_name" type="string" value="$(arg image_name)"/>
-        <param name="depth_topic_name" type="string" value="$(arg depth_name)"/>
-        <param name="imu_topic_name" type="string" value="$(arg imu_name)"/>
-        <param name="pose_topic_name" type="string" value="$(arg pose_name)"/>
-	<param name="folder_dir" type="string" value="$(arg save_dir)"/>
+        <param name="single_on"          type="bool" value="$(arg single_image_on)"/>
+        <param name="rgbd_on"            type="bool" value="$(arg rgbd_images_on)"/>
+        <param name="stereo_on"          type="bool" value="$(arg stereo_images_on)"/>
+        <param name="imu_on"             type="bool" value="$(arg imu_on)"/>
+        <param name="magnetic_on"        type="bool" value="$(arg magnetic_on)"/>
+
+        <param name="pose_on"            type="bool" value="$(arg pose_on)"/>
+
+        <param name="single_topic"       type="string" value="$(arg single_image_name)"/>
+        <param name="rgb_topic"          type="string" value="$(arg rgb_image_name)"/>
+        <param name="depth_topic"        type="string" value="$(arg depth_image_name)"/>
+        <param name="stereo_left_topic"  type="string" value="$(arg stereo_left_image_name)"/>
+        <param name="stereo_right_topic" type="string" value="$(arg stereo_right_image_name)"/>
+        <param name="imu_topic"          type="string" value="$(arg imu_name)"/>
+        <param name="magnetic_topic"     type="string" value="$(arg magnetic_name)"/>
+        <param name="pose_topic"         type="string" value="$(arg pose_name)"/>
+
+	    <param name="folder_dir"         type="string" value="$(arg save_folder_dir)"/>
     </node>
 </launch>

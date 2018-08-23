@@ -24,17 +24,17 @@ public:
   ~TopicLogger();
   void pose_addline(const PoseVector& current_pose, const TopicTime& curr_time);
   void imu_addline(const ImuVector& current_imu, const TopicTime& curr_time);
-  void image_addline(const cv::Mat& img,const TopicTime& curr_time);
-  void rgbd_addline(const cv::Mat& current_image, const cv::Mat& current_depth, const TopicTime& image_time);
+  void single_image_addline(const cv::Mat& single_image,const TopicTime& curr_time);
+  void stereo_image_addline(const cv::Mat& current_left_image, const cv::Mat& current_right_image, const TopicTime& image_time);
+  void rgbd_image_addline(const cv::Mat& current_rgb_image, const cv::Mat& current_depth_image, const TopicTime& image_time);
+
 private:
   std::string folder_dir;
 
   PoseVector current_pose;
   ImuVector current_imu;
 
-  std::ofstream file_image, file_imu, file_pose;
-  std::string file_image_name, file_imu_name, file_pose_name;
-
+  std::ofstream file_single_image, file_stereo_image, file_rgbd_image, file_imu, file_pose;
 };
 
 #endif
