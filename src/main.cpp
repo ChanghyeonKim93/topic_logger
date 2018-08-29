@@ -110,10 +110,21 @@ void rgbd_callback(const sensor_msgs::ImageConstPtr &rgb, const sensor_msgs::Ima
 void stereo_image_callback(const sensor_msgs::ImageConstPtr &left, const sensor_msgs::ImageConstPtr &right)
 {
 	cv_bridge::CvImagePtr cv_ptr_left, cv_ptr_right;
-	cv_ptr_left = cv_bridge::toCvCopy(left, sensor_msgs::image_encodings::MONO8);
-	cv_ptr_right = cv_bridge::toCvCopy(right, sensor_msgs::image_encodings::MONO8);
+	cv_ptr_left = cv_bridge::toCvCopy(left, sensor_msgs::image_encodings::BGR8);
+	cv_ptr_right = cv_bridge::toCvCopy(right, sensor_msgs::image_encodings::BGR8);
 	cur_left_img = cv_ptr_left->image;
 	cur_right_img = cv_ptr_right->image;
+
+	bool static png_param_on = false;
+	std::vector<int> static png_parameters;
+	if (png_param_on == false)
+	{
+		png_parameters.push_back(CV_IMWRITE_PNG_COMPRESSION); // We save with no compression for faster processing
+		png_parameters.push_back(0);
+		png_param_on = true;
+	}
+	std::string file_name =  "/home/icslkchlap/123.png";
+	cv::imwrite(file_name, cur_left_img, png_parameters);
 
 	double curr_time = (double)(left->header.stamp.sec * 1e6 + left->header.stamp.nsec / 1000) / 1000000.0;
 	stereo_time = dtos(curr_time);
@@ -176,8 +187,8 @@ int main(int argc, char **argv)
 	bool single_on, rgbd_on, stereo_on, imu_on, magnetic_on, pose_on;
 
 	ros::param::get("~single_on", single_on);
-	ros::param::get("~rgbd_image_on", rgbd_on);
-	ros::param::get("~stereo_image_on", stereo_on);
+	ros::param::get("~rgbd_on", rgbd_on);
+	ros::param::get("~stereo_on", stereo_on);
 	ros::param::get("~imu_on", imu_on);
 	ros::param::get("~magnetic_on", magnetic_on);
 	ros::param::get("~pose_on", pose_on);
@@ -200,25 +211,21 @@ int main(int argc, char **argv)
 	ros::param::get("~magnetic_topic", magnetic_topic);
 	ros::param::get("~pose_topic", pose_topic);
 
-	ROS_INFO_STREAM(" Activated topics - single (" << single_on << "), rgbd (" << rgbd_on << "), stereo (" << stereo_on << "), imu (" << imu_on << "), magnetic (" << magnetic_on << "), pose (" << pose_on << ")");
+
+	message_filters::Subscriber<sensor_msgs::Image> left_img_sub(nh, stereo_left_topic, 1);
+	message_filters::Subscriber<sensor_msgs::Image> right_img_sub(nh, stereo_right_topic, 1);
+	message_filters::Synchronizer<MySyncPolicy> sync_stereo(MySyncPolicy(3), left_img_sub, right_img_sub);
+
+        message_filters::Subscriber<sensor_msgs::Image> rgb_img_sub(nh, rgb_topic, 1);
+        message_filters::Subscriber<sensor_msgs::Image> depth_img_sub(nh, depth_topic, 1);
+        message_filters::Synchronizer<MySyncPolicy> sync_rgbd(MySyncPolicy(3), rgb_img_sub, depth_img_sub);
+
+	ROS_INFO_STREAM(" Activated topics - single [" << single_on << "], rgbd [" << rgbd_on << "], stereo [" << stereo_on << "], imu [" << imu_on << "], magnetic [" << magnetic_on << "], pose [" << pose_on << "]");
+
 	if (rgbd_on == true)
-	{
-		message_filters::Subscriber<sensor_msgs::Image> rgb_img_sub(nh, rgb_topic, 1);
-		message_filters::Subscriber<sensor_msgs::Image> depth_img_sub(nh, depth_topic, 1);
-
-		message_filters::Synchronizer<MySyncPolicy> sync_rgbd(MySyncPolicy(4), rgb_img_sub, depth_img_sub);
 		sync_rgbd.registerCallback(boost::bind(&rgbd_callback, _1, _2));
-	}
-
 	if (stereo_on == true)
-	{
-		message_filters::Subscriber<sensor_msgs::Image> left_img_sub(nh, stereo_left_topic, 1);
-		message_filters::Subscriber<sensor_msgs::Image> right_img_sub(nh, stereo_right_topic, 1);
-
-		message_filters::Synchronizer<MySyncPolicy> sync_stereo(MySyncPolicy(4), left_img_sub, right_img_sub);
 		sync_stereo.registerCallback(boost::bind(&stereo_image_callback, _1, _2));
-	}
-
 	if (pose_on == true)
 		cur_pose_sub = nh.subscribe<geometry_msgs::TransformStamped>(pose_topic, 10, &pose_callback);
 	if (single_on == true)
@@ -235,6 +242,7 @@ int main(int argc, char **argv)
 		{
 			topic_logger->imu_addline(current_imu, imu_time);
 			imu_updated = false;
+			std::cout<<"imu"<<std::endl;
 		}
 		if (single_on == true && single_updated == true)
 		{
@@ -244,8 +252,9 @@ int main(int argc, char **argv)
 
 		if (stereo_on == true && stereo_updated == true)
 		{
-			topic_logger->stereo_image_addline(cur_left_img, cur_right_img, single_time);
+			topic_logger->stereo_image_addline(cur_left_img, cur_right_img, stereo_time);
 			stereo_updated = false;
+			std::cout<<"stereo"<<std::endl;
 		}
 
 		if (rgbd_on == true && rgbd_updated == true)

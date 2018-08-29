@@ -1,25 +1,25 @@
 <launch>
     <arg name="single_image_on"  default="false"/>
     <arg name="rgbd_images_on"   default="false"/>
-    <arg name="stereo_images_on" default="false"/>
+    <arg name="stereo_images_on" default="true"/>
     <arg name="imu_on"           default="true"/>
     <arg name="magnetic_on"      default="true"/>
-    <arg name="pose_on"          default="false"/>
+    <arg name="pose_on"          default="true"/>
 
     <arg name="single_image_name"        default="/camera/image_raw"/>
 
     <arg name="rgb_image_name"           default="/camera/rgb/image_raw"/>
     <arg name="depth_image_name"         default="/camera/depth/image_rect"/>
 
-    <arg name="stereo_left_image_name"   default="/camera/image_left"/>
-    <arg name="stereo_right_image_name"  default="/camera/image_right"/>'
+    <arg name="stereo_left_image_name"   default="/stereo/left/image_raw"/>
+    <arg name="stereo_right_image_name"  default="/stereo/right/image_raw"/>'
 
     <arg name="imu_name"                 default="/imu/imu"/>
     <arg name="magnetic_name"            default="/imu/magnetic_field"/>
 
-    <arg name="pose_name"                default="/vicon/wand/wand"/>
+    <arg name="pose_name"                default="/vicon/CHK_STEREO/CHK_STEREO"/>
 
-    <arg name="save_folder_dir"          default="/home/icslkchnuc/save_exp/"/>
+    <arg name="save_folder_dir"          default="/home/icslkchlap/save_exp/"/>
 
     <node pkg="topic_logger" name="topic_logger_node" type="topic_logger_node" output="screen">
         <param name="single_on"          type="bool" value="$(arg single_image_on)"/>

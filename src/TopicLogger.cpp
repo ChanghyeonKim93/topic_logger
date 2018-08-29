@@ -137,8 +137,8 @@ void TopicLogger::stereo_image_addline(const cv::Mat &current_left_image, const 
 		png_param_on = true;
 	}
 	std::string file_name = folder_dir + "stereo/left/" + image_time + ".png";
-	cv::imwrite(file_name, current_left_image, png_parameters);
+	//cv::imwrite(file_name, current_left_image, png_parameters);
 	std::string file_depth_name = folder_dir + "stereo/right/" + image_time + ".png";
-	cv::imwrite(file_depth_name, current_right_image, png_parameters);
+	//cv::imwrite(file_depth_name, current_right_image, png_parameters);
 	file_stereo_image << image_time << " " << image_time << ".png" << "\n"; // association save
 }
