@@ -132,7 +132,7 @@ TopicLogger::~TopicLogger()
 	this->file_stereo_image.close();
 	this->file_pose.close();
 	this->file_imu.close();
-	ROS_INFO_STREAM("- Topic logger is terminated.\n");
+	//ROS_INFO_STREAM("- Topic logger is terminated.\n");
 };
 
 void TopicLogger::pose_addline(const PoseVector &current_pose, const TopicTime &curr_time)
@@ -157,7 +157,7 @@ void TopicLogger::imu_addline(const ImuVector &current_imu, const TopicTime &cur
 		this->file_imu << current_imu(i, 0) << " ";
 	}
 	this->file_imu << "\n";
-	ROS_INFO_STREAM("imu time : "<<curr_time);
+	//ROS_INFO_STREAM("imu time : "<<curr_time);
 };
 
 void TopicLogger::single_image_addline(const cv::Mat &img, const TopicTime &curr_time)
@@ -265,7 +265,7 @@ void TopicLogger::rgbd_callback(const sensor_msgs::ImageConstPtr &rgb, const sen
 	if(this->rgbd_on == true)
 		this->rgbd_image_addline(this->cur_rgb_img, this->cur_depth_img, this->rgbd_time);
 
-	ROS_INFO_STREAM("    Rgb-d updated");
+	//ROS_INFO_STREAM("    Rgb-d updated");
 }
 
 void TopicLogger::stereo_image_callback(const sensor_msgs::ImageConstPtr &left, const sensor_msgs::ImageConstPtr &right)

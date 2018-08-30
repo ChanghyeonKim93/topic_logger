@@ -1,10 +1,10 @@
 <launch>
     <arg name="single_image_on"  default="false"/>
     <arg name="rgbd_images_on"   default="false"/>
-    <arg name="stereo_images_on" default="true"/>
+    <arg name="stereo_images_on" default="false"/>
     <arg name="imu_on"           default="true"/>
     <arg name="magnetic_on"      default="true"/>
-    <arg name="pose_on"          default="true"/>
+    <arg name="pose_on"          default="false"/>
 
     <arg name="single_image_name"        default="/camera/image_raw"/>
 
