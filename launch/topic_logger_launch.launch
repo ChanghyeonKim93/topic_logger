@@ -1,23 +1,23 @@
 <launch>
     <arg name="single_image_on"  default="false"/>
     <arg name="rgbd_images_on"   default="false"/>
-    <arg name="stereo_images_on" default="false"/>
+    <arg name="stereo_images_on" default="true"/>
     <arg name="imu_on"           default="true"/>
-    <arg name="magnetic_on"      default="true"/>
+    <arg name="magnetic_on"      default="false"/>
     <arg name="pose_on"          default="false"/>
 
-    <arg name="single_image_name"        default="/camera/image_raw"/>
+    <arg name="single_image_name"        default="/mv_26805233/image_raw"/>
 
-    <arg name="rgb_image_name"           default="/camera/rgb/image_raw"/>
+    <arg name="rgb_image_name"           default="/mv_25002076/image_raw"/>
     <arg name="depth_image_name"         default="/camera/depth/image_rect"/>
 
     <arg name="stereo_left_image_name"   default="/stereo/left/image_raw"/>
     <arg name="stereo_right_image_name"  default="/stereo/right/image_raw"/>'
 
-    <arg name="imu_name"                 default="/imu/imu"/>
-    <arg name="magnetic_name"            default="/imu/magnetic_field"/>
+    <arg name="imu_name"                 default="/imu/data"/>
+    <arg name="magnetic_name"            default="/imu/mag"/>
 
-    <arg name="pose_name"                default="/vicon/CHK_STEREO/CHK_STEREO"/>
+    <arg name="pose_name"                default="/vicon/CHK_MONO/CHK_MONO"/>
 
     <arg name="save_folder_dir"          default="/home/icslkchlap/save_exp/"/>
 

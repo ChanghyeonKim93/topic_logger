@@ -84,7 +84,7 @@ TopicLogger::TopicLogger()
 	folder_create_command = "mkdir " + folder_dir_temp;
 	system(folder_create_command.c_str());
 
-	folder_create_command = "mkdir " + folder_dir_temp + "single_image";
+	folder_create_command = "mkdir " + folder_dir_temp + "single";
 	system(folder_create_command.c_str());
 
 	folder_create_command = "mkdir " + folder_dir_temp + "stereo";
@@ -101,28 +101,28 @@ TopicLogger::TopicLogger()
 	folder_create_command = "mkdir " + folder_dir_temp + "rgbd/rgb";
 	system(folder_create_command.c_str());
 
-	file_name = folder_dir_temp + "association_single.txt";
+	file_name = folder_dir_temp + "single/association_single.txt";
 	//std::cout << file_name.c_str() << std::endl;
 	this->file_single_image.open(file_name.c_str(), std::ios::trunc);
-	this->file_single_image << "# time filename";
+	this->file_single_image << "#time filename\n";
 
 	file_name = folder_dir_temp + "stereo/association_stereo.txt";
 	//std::cout << file_name.c_str() << std::endl;
 	this->file_stereo_image.open(file_name.c_str(), std::ios::trunc);
-	this->file_stereo_image << "# time filename";
+	this->file_stereo_image << "#time filename\n";
 
 	file_name = folder_dir_temp + "rgbd/association_rgbd.txt";
 	//std::cout << file_name.c_str() << std::endl;
 	this->file_rgbd_image.open(file_name.c_str(), std::ios::trunc);
-	this->file_rgbd_image << "# time filename";
+	this->file_rgbd_image << "#time filename\n";
 
 	file_name = folder_dir_temp + "imu.txt";
 	this->file_imu.open(file_name.c_str());
-	this->file_imu << "# time tx ty tz wx wy wz mx my mz qx qy qz qw\n";
+	this->file_imu << "#time tx ty tz wx wy wz mx my mz qw qx qy qz\n";
 
 	file_name = folder_dir_temp + "groundtruth.txt";
 	this->file_pose.open(file_name.c_str());
-	this->file_pose << "# time tx ty tz qx qy qz qw\n";
+	this->file_pose << "#time tx ty tz qw qx qy qz\n";
 };
 
 TopicLogger::~TopicLogger()
@@ -170,9 +170,9 @@ void TopicLogger::single_image_addline(const cv::Mat &img, const TopicTime &curr
 		png_parameters.push_back(0);
 		png_param_on = true;
 	}
-	std::string file_name = folder_dir + "single_image/" + curr_time + ".png";
+	std::string file_name = folder_dir + "single/" + curr_time + ".png";
 	cv::imwrite(file_name, img, png_parameters);
-	this->file_single_image << curr_time << " " << curr_time << ".png"
+	this->file_single_image <<curr_time<<" "<< curr_time << ".png"
 							<< "\n"; // association save
 };
 
@@ -190,7 +190,7 @@ void TopicLogger::rgbd_image_addline(const cv::Mat &current_rgb_image, const cv:
 	cv::imwrite(file_name, current_rgb_image, png_parameters);
 	std::string file_depth_name = this->folder_dir + "rgbd/depth/" + image_time + ".png";
 	cv::imwrite(file_depth_name, current_depth_image, png_parameters);
-	this->file_rgbd_image << image_time << " " << image_time << ".png"
+	this->file_rgbd_image <<image_time<<" "<< image_time << ".png"
 						  << "\n"; // association save
 }
 
@@ -208,7 +208,7 @@ void TopicLogger::stereo_image_addline(const cv::Mat &current_left_image, const 
 	cv::imwrite(file_name, current_left_image, png_parameters);
 	std::string file_depth_name = this->folder_dir + "stereo/right/" + image_time + ".png";
 	cv::imwrite(file_depth_name, current_right_image, png_parameters);
-	file_stereo_image << image_time << " " << image_time << ".png" << "\n"; // association save
+	file_stereo_image <<image_time<<" "<< image_time << ".png" << "\n"; // association save
 	ROS_INFO_STREAM("stereo time :"<<image_time);
 }
 
@@ -219,10 +219,10 @@ void TopicLogger::pose_callback(const geometry_msgs::TransformStamped::ConstPtr 
 	this->current_pose(0, 0) = msg->transform.translation.x;
 	this->current_pose(1, 0) = msg->transform.translation.y;
 	this->current_pose(2, 0) = msg->transform.translation.z;
-	this->current_pose(3, 0) = msg->transform.rotation.x;
-	this->current_pose(4, 0) = msg->transform.rotation.y;
-	this->current_pose(5, 0) = msg->transform.rotation.z;
-	this->current_pose(6, 0) = msg->transform.rotation.w;
+	this->current_pose(4, 0) = msg->transform.rotation.w;
+	this->current_pose(5, 0) = msg->transform.rotation.x;
+	this->current_pose(6, 0) = msg->transform.rotation.y;
+	this->current_pose(7, 0) = msg->transform.rotation.z;
 
 	double curr_time = (double)(msg->header.stamp.sec * 1e6 + msg->header.stamp.nsec / 1000) / 1000000.0;
 	this->pose_time = dtos(curr_time);
@@ -236,7 +236,8 @@ void TopicLogger::pose_callback(const geometry_msgs::TransformStamped::ConstPtr 
 void TopicLogger::image_callback(const sensor_msgs::ImageConstPtr &msg)
 {
 	cv_bridge::CvImagePtr cv_ptr;
-	cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::RGB8);
+	// cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
+	cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::MONO8);
 	cur_single_img = cv_ptr->image;
 
 	double curr_time = (double)(msg->header.stamp.sec * 1e6 + msg->header.stamp.nsec / 1000) / 1000000.0;
@@ -294,10 +295,11 @@ void TopicLogger::imu_callback(const sensor_msgs::ImuConstPtr &msg)
 	this->current_imu(4, 0) = msg->angular_velocity.y;
 	this->current_imu(5, 0) = msg->angular_velocity.z;
 
-	this->current_imu(9, 0) = msg->orientation.x;
-	this->current_imu(10, 0) = msg->orientation.y;
-	this->current_imu(11, 0) = msg->orientation.z;
-	this->current_imu(12, 0) = msg->orientation.w;
+	this->current_imu(9, 0)  = msg->orientation.w;
+	this->current_imu(10, 0) = msg->orientation.x;
+	this->current_imu(11, 0) = msg->orientation.y;
+	this->current_imu(12, 0) = msg->orientation.z;
+
 
 	double curr_time = (double)(msg->header.stamp.sec * 1e6 + msg->header.stamp.nsec / 1000) / 1000000.0;
 	this->imu_time = dtos(curr_time);
