@@ -204,11 +204,17 @@ void TopicLogger::stereo_image_addline(const cv::Mat &current_left_image, const 
 		png_parameters.push_back(0);
 		png_param_on = true;
 	}
+	cv::Mat img_temp;
+
 	std::string file_name = this->folder_dir + "stereo/left/" + image_time + ".png";
-	cv::imwrite(file_name, current_left_image, png_parameters);
+	cv::cvtColor(current_left_image,img_temp,cv::COLOR_BGR2GRAY);
+	cv::imwrite(file_name, img_temp, png_parameters);
+
 	std::string file_depth_name = this->folder_dir + "stereo/right/" + image_time + ".png";
-	cv::imwrite(file_depth_name, current_right_image, png_parameters);
+	cv::cvtColor(current_right_image,img_temp,cv::COLOR_BGR2GRAY);
+	cv::imwrite(file_depth_name, img_temp, png_parameters);
 	file_stereo_image <<image_time<<" "<< image_time << ".png" << "\n"; // association save
+
 	ROS_INFO_STREAM("stereo time :"<<image_time);
 }
 
