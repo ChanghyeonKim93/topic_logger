@@ -20,7 +20,7 @@ catkin_package(
 set(includeDirs ${includeDirs} ${CMAKE_CURRENT_BINARY_DIR})
 set(includeDirs ${includeDirs} include)
 
-set(SRC ${SRC} src/main2.cpp)
+set(SRC ${SRC} src/main.cpp)
 set(SRC ${SRC} src/TopicLogger_kch.cpp)
 set(SRC ${SRC} include/TopicLogger_kch.h)
 

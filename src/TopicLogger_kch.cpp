@@ -189,7 +189,11 @@ void TopicLogger::rgbd_image_addline(const cv::Mat &current_rgb_image, const cv:
 	std::string file_name = this->folder_dir + "rgbd/rgb/" + image_time + ".png";
 	cv::imwrite(file_name, current_rgb_image, png_parameters);
 	std::string file_depth_name = this->folder_dir + "rgbd/depth/" + image_time + ".png";
-	cv::imwrite(file_depth_name, current_depth_image, png_parameters);
+	cv::Mat img_depth_16uc1;
+	current_depth_image *= 1000.0f;
+
+    	current_depth_image.convertTo(img_depth_16uc1, CV_16UC1);
+	cv::imwrite(file_depth_name, img_depth_16uc1, png_parameters);
 	this->file_rgbd_image <<image_time<<" "<< image_time << ".png"
 						  << "\n"; // association save
 }
